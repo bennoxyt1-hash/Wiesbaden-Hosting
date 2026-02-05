@@ -2,331 +2,129 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RBX-Host | Private Server Dashboard</title>
-    
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Notruf Hosting | Dashboard</title>
     <style>
-        :root {
-            --bg-dark: #0f1218;
-            --bg-card: #161b22;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --text-main: #e6edf3;
-            --text-dim: #8b949e;
-            --border: #30363d;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            min-height: 100vh;
-        }
-
-/* Ersetze den .sidebar Block (ca. Zeile 36 bis 46) mit diesem: */
-.sidebar {
-    width: 260px;
-    background-color: var(--bg-card);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column; /* Hier lag der Fehler (war doppelt/falsch) */
-    padding: 20px;
-    position: fixed;
-    height: 100vh;
-}
-
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
-        .nav-item {
-            padding: 12px 15px;
-            border-radius: 8px;
-            color: var(--text-dim);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 5px;
-            transition: 0.2s;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: var(--border);
-            color: white;
-        }
-
-        .nav-item i { width: 20px; }
-
-        /* MAIN CONTENT */
-        .main {
-            margin-left: 260px;
-            flex: 1;
-            padding: 40px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--success);
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid var(--success);
-        }
-
-        /* DASHBOARD GRID */
-        .grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* CONSOLE STYLE */
-        .console {
-            background: #000;
-            border-radius: 8px;
-            padding: 15px;
-            height: 350px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            overflow-y: auto;
-            color: #d1d1d1;
-            line-height: 1.6;
-        }
-
-        .console .time { color: var(--text-dim); margin-right: 10px; }
-        .console .info { color: var(--accent); }
-        .console .success { color: var(--success); }
-        .console .warn { color: var(--warning); }
-
-        /* BUTTONS */
-        .btn-group { display: flex; gap: 10px; }
-        
-        button {
-            padding: 10px 18px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-primary:hover { background: var(--accent-hover); }
-
-        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; }
-
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
-        .btn-outline:hover { background: var(--border); }
-
-        /* INPUTS */
-        input {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: white;
-            margin-bottom: 10px;
-            outline: none;
-        }
-
-        input:focus { border-color: var(--accent); }
-
-        /* NOTRUF HAMBURG SYSTEM SPEZIFISCH */
-        .server-code-box {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px dashed var(--accent);
-        }
-
-        .code-display {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: 5px;
-            color: var(--accent);
-            margin: 10px 0;
-        }
-
+        :root { --bg: #0f121a; --card: #1a1d2b; --accent: #007bff; --success: #28a745; --text: #ffffff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { background: var(--card); padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; background: var(--accent); color: white; }
+        #verifyZone, #dashboard { display: none; }
+        .code-display { font-size: 24px; color: #00ff88; font-family: monospace; margin: 20px 0; padding: 10px; border: 2px dashed #00ff88; }
+        .log-box { background: #000; padding: 10px; border-radius: 4px; font-size: 12px; height: 100px; overflow-y: auto; text-align: left; margin-top: 15px; color: #aaa; }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="brand">
-            <i class="fa-solid fa-shield-halved"></i>
-            RBX-CONTROL
-        </div>
-        
-        <nav>
-            <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-users"></i> Spieler Liste</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-terminal"></i> Live Log</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-file-code"></i> Skripte</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-gears"></i> Konfiguration</a>
-        </nav>
-
-        <div style="margin-top: auto; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;">
-            <small style="color: var(--text-dim)">Besitzer:</small><br>
-            <strong>DeinRobloxName</strong>
-        </div>
+    <!-- SCHRITT 1: Login -->
+    <div id="login" class="box">
+        <h2>Notruf Hamburg Hosting</h2>
+        <p>Gib deinen Roblox Usernamen ein:</p>
+        <input type="text" id="rbxName" placeholder="Roblox Username">
+        <button onclick="startVerify()">Verifizierung starten</button>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
-        <div class="header">
-            <div>
-                <h1>Server Management</h1>
-                <p style="color: var(--text-dim)">Verwalte deinen privaten "Notruf"-Instanz-Server</p>
-            </div>
-            <div class="status-badge">
-                <i class="fa-solid fa-circle"></i> ONLINE
-            </div>
+    <!-- SCHRITT 2: Verifizierung -->
+    <div id="verifyZone" class="box">
+        <h2>Verifizierung</h2>
+        <p>Kopiere diesen Code in deine Roblox "Über mich" (Bio) Beschreibung:</p>
+        <div class="code-display" id="codeText">CODE-1234</div>
+        <button onclick="checkAccount()" id="btnCheck">Bio & Gamepass prüfen</button>
+        <p id="error" style="color: #ff4444; font-size: 13px;"></p>
+    </div>
+
+    <!-- SCHRITT 3: Das eigentliche Dashboard (txAdmin Style) -->
+    <div id="dashboard" class="box" style="width: 600px;">
+        <h2>Hosting Dashboard</h2>
+        <p>Angemeldet als: <strong id="userLabel"></strong></p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <button style="background: var(--success);" onclick="sendToGAS('START_SERVER')">SERVER STARTEN</button>
+            <button style="background: #dc3545;" onclick="sendToGAS('STOP_SERVER')">SERVER STOPPEN</button>
         </div>
-
-        <div class="grid">
-            <!-- LINKE SEITE -->
-            <div>
-                <div class="card">
-                    <div class="card-title">Steuerzentrale</div>
-                    <div class="btn-group">
-                        <button class="btn-primary" onclick="log('Server Neustart wird ausgeführt...')">
-                            <i class="fa-solid fa-rotate"></i> Neustart
-                        </button>
-                        <button class="btn-outline" onclick="log('Shutdown Signal gesendet...')">
-                            <i class="fa-solid fa-power-off"></i> Herunterfahren
-                        </button>
-                        <button class="btn-danger" onclick="alert('Bist du sicher?')">
-                            <i class="fa-solid fa-trash"></i> Instanz löschen
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Live-Konsole <i class="fa-solid fa-terminal"></i></div>
-                    <div id="console" class="console">
-                        <div><span class="time">[12:00:05]</span> <span class="info">Authentifizierung erfolgreich...</span></div>
-                        <div><span class="time">[12:00:06]</span> <span class="success">Verbindung zu Roblox Spiel-Server ID #52349 hergestellt.</span></div>
-                        <div><span class="time">[12:00:10]</span> <span>Datenbank 'Hamburg_Save' geladen.</span></div>
-                    </div>
-                    <input type="text" placeholder="Befehl direkt an Server senden..." style="margin-top: 15px;">
-                </div>
-            </div>
-
-            <!-- RECHTE SEITE -->
-            <div>
-                <div class="card">
-                    <div class="card-title">Server Beitritts-Code</div>
-                    <div class="server-code-box">
-                        <small style="color: var(--text-dim)">Dein Freunde-Invite Code:</small>
-                        <div class="code-display" id="joinCode">HAM-X92</div>
-                        <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="generateCode()">
-                            <i class="fa-solid fa-shuffle"></i> Neu generieren
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Notruf Tools</div>
-                    <label style="font-size: 0.8rem; color: var(--text-dim);">Global Message:</label>
-                    <input type="text" id="announceInput" placeholder="Nachricht an alle...">
-                    <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="broadcast()">
-                        <i class="fa-solid fa-bullhorn"></i> Senden
-                    </button>
-
-                    <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
-
-                    <label style="font-size: 0.8rem; color: var(--text-dim);">Spieler Kick (Name):</label>
-                    <input type="text" id="kickName" placeholder="Spieler Name...">
-                    <button class="btn-danger" style="width: 100%; justify-content: center;" onclick="kick()">
-                        <i class="fa-solid fa-user-xmark"></i> Kicken
-                    </button>
-                </div>
-            </div>
-        </div>
+        <input type="text" id="gmsg" placeholder="Nachricht an alle...">
+        <button onclick="sendToGAS('MESSAGE', document.getElementById('gmsg').value)">Global Message senden</button>
+        <div class="log-box" id="logs">Status: Bereit...</div>
     </div>
 
     <script>
-        function log(msg, type='info') {
-            const consoleBox = document.getElementById('console');
-            const time = new Date().toLocaleTimeString();
-            const div = document.createElement('div');
-            div.innerHTML = `<span class="time">[${time}]</span> <span class="${type}">${msg}</span>`;
-            consoleBox.appendChild(div);
-            consoleBox.scrollTop = consoleBox.scrollHeight;
+        // HIER DEINE DATEN EINTRAGEN
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwFPAdde56q51Mh87PLF_wbEyXGg4e0Abw182YPPZ1cp7hQgtfi2rp7yGtNNtySA8xFqA/exec"; 
+        const GAMEPASS_ID = 1702894929; // Deine 100 Robux Gamepass ID
+        const PROXY = "https://roproxy.com"; 
+
+        let rbxName = "";
+        let rbxId = "";
+
+        // 1. Code vom GAS holen
+        async function startVerify() {
+            rbxName = document.getElementById('rbxName').value;
+            if(!rbxName) return;
+
+            const res = await fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "getVerifyCode", username: rbxName })
+            });
+            const data = await res.json();
+            document.getElementById('codeText').innerText = data.code;
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('verifyZone').style.display = 'block';
         }
 
-        function generateCode() {
-            const newCode = "HAM-" + Math.random().toString(36).substring(2, 5).toUpperCase();
-            document.getElementById('joinCode').innerText = newCode;
-            log("Neuer Invite-Code generiert: " + newCode, 'warn');
+        // 2. Account & Kauf prüfen (Via RoProxy)
+        async function checkAccount() {
+            const errorTxt = document.getElementById('error');
+            errorTxt.innerText = "Prüfe...";
+            
+            try {
+                // Get UserId
+                const uRes = await fetch(`${PROXY}/users/v1/usernames/users`, {
+                    method: "POST", headers: {"Content-Type":"application/json"},
+                    body: JSON.stringify({usernames: [rbxName]})
+                });
+                const uData = await uRes.json();
+                rbxId = uData.data[0].id;
+
+                // Check Bio
+                const bRes = await fetch(`${PROXY}/users/v1/users/${rbxId}`);
+                const bData = await bRes.json();
+                const neededCode = document.getElementById('codeText').innerText;
+                
+                if(!bData.description.includes(neededCode)) {
+                    errorTxt.innerText = "Code nicht in Bio gefunden!"; return;
+                }
+
+                // Check Gamepass (Item im Inventar?)
+                const pRes = await fetch(`${PROXY}/inventory/v1/users/${rbxId}/items/1/${GAMEPASS_ID}`);
+                const pData = await pRes.json();
+                
+                if(pData.data.length === 0) {
+                    errorTxt.innerText = "Du besitzt den 100 Robux Gamepass nicht!"; return;
+                }
+
+                // ERFOLG -> Zeige Dashboard
+                document.getElementById('verifyZone').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('userLabel').innerText = rbxName;
+
+            } catch(e) { errorTxt.innerText = "Fehler bei der Abfrage."; }
         }
 
-        function broadcast() {
-            const msg = document.getElementById('announceInput').value;
-            if(msg) {
-                log("Announcement: " + msg, 'success');
-                document.getElementById('announceInput').value = "";
-            }
+        // 3. Befehl an das GAS speichern
+        async function sendToGAS(type, val = "") {
+            addLog("Sende Befehl: " + type);
+            await fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "saveCommand",
+                    userId: rbxId,
+                    command: { action: type, data: val }
+                })
+            });
+            addLog("Befehl wurde gespeichert.");
         }
 
-        function kick() {
-            const name = document.getElementById('kickName').value;
-            if(name) {
-                log("Kicke Spieler: " + name, 'danger');
-                document.getElementById('kickName').value = "";
-            }
+        function addLog(msg) {
+            document.getElementById('logs').innerHTML += "<br>> " + msg;
         }
     </script>
 </body>
