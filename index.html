@@ -2,129 +2,219 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Notruf Hosting | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBX-Control | Hosting Dashboard</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --bg: #0f121a; --card: #1a1d2b; --accent: #007bff; --success: #28a745; --text: #ffffff; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .box { background: var(--card); padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; background: var(--accent); color: white; }
-        #verifyZone, #dashboard { display: none; }
-        .code-display { font-size: 24px; color: #00ff88; font-family: monospace; margin: 20px 0; padding: 10px; border: 2px dashed #00ff88; }
-        .log-box { background: #000; padding: 10px; border-radius: 4px; font-size: 12px; height: 100px; overflow-y: auto; text-align: left; margin-top: 15px; color: #aaa; }
+        :root {
+            --bg: #0d1117; --card: #161b22; --border: #30363d;
+            --accent: #3b82f6; --success: #238636; --danger: #da3633;
+            --text: #c9d1d9; --text-dim: #8b949e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; overflow: hidden;
+        }
+
+        /* Container & Cards */
+        .container {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; width: 100%; max-width: 450px;
+            padding: 40px; position: relative;
+        }
+
+        h1 { font-size: 24px; color: white; margin-bottom: 8px; text-align: center; }
+        p.subtitle { color: var(--text-dim); font-size: 14px; text-align: center; margin-bottom: 30px; }
+
+        /* Formular Elemente */
+        input {
+            width: 100%; padding: 12px; background: #010409; border: 1px solid var(--border);
+            border-radius: 6px; color: white; margin-bottom: 15px; outline: none; font-size: 16px;
+        }
+        input:focus { border-color: var(--accent); }
+
+        button {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; 
+            font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 15px;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { filter: brightness(1.2); }
+        .btn-success { background: var(--success); color: white; margin-top: 10px; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Verifizierungschritt */
+        #verifyStep, #dashboardView { display: none; }
+        
+        .code-box {
+            background: #010409; padding: 15px; border-radius: 8px; border: 1px dashed var(--accent);
+            color: var(--accent); font-family: 'JetBrains Mono', monospace;
+            font-size: 22px; text-align: center; margin: 20px 0;
+        }
+
+        .status-msg { font-size: 13px; text-align: center; margin-top: 15px; min-height: 20px; }
+        .loader { color: var(--accent); display: none; margin-bottom: 10px; }
+
+        /* Dashboard spezifisch */
+        .dashboard-container { max-width: 800px; display: none; width: 90%; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .console {
+            background: #010409; border-radius: 6px; padding: 15px; height: 180px; 
+            overflow-y: auto; font-family: 'JetBrains Mono'; font-size: 12px; color: #8b949e; margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- SCHRITT 1: Login -->
-    <div id="login" class="box">
-        <h2>Notruf Hamburg Hosting</h2>
-        <p>Gib deinen Roblox Usernamen ein:</p>
-        <input type="text" id="rbxName" placeholder="Roblox Username">
-        <button onclick="startVerify()">Verifizierung starten</button>
-    </div>
+    <!-- LOGIN & VERIFY CARD -->
+    <div id="authView" class="container">
+        <h1>Server Hosting</h1>
+        <p class="subtitle">Verwalte deine Notruf-Server Instanz</p>
 
-    <!-- SCHRITT 2: Verifizierung -->
-    <div id="verifyZone" class="box">
-        <h2>Verifizierung</h2>
-        <p>Kopiere diesen Code in deine Roblox "Über mich" (Bio) Beschreibung:</p>
-        <div class="code-display" id="codeText">CODE-1234</div>
-        <button onclick="checkAccount()" id="btnCheck">Bio & Gamepass prüfen</button>
-        <p id="error" style="color: #ff4444; font-size: 13px;"></p>
-    </div>
-
-    <!-- SCHRITT 3: Das eigentliche Dashboard (txAdmin Style) -->
-    <div id="dashboard" class="box" style="width: 600px;">
-        <h2>Hosting Dashboard</h2>
-        <p>Angemeldet als: <strong id="userLabel"></strong></p>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <button style="background: var(--success);" onclick="sendToGAS('START_SERVER')">SERVER STARTEN</button>
-            <button style="background: #dc3545;" onclick="sendToGAS('STOP_SERVER')">SERVER STOPPEN</button>
+        <!-- Login: Name eingeben -->
+        <div id="loginStep">
+            <input type="text" id="username" placeholder="Roblox Benutzername">
+            <button class="btn-primary" onclick="getVerificationCode()">Account finden</button>
         </div>
-        <input type="text" id="gmsg" placeholder="Nachricht an alle...">
-        <button onclick="sendToGAS('MESSAGE', document.getElementById('gmsg').value)">Global Message senden</button>
-        <div class="log-box" id="logs">Status: Bereit...</div>
+
+        <!-- Verify: Code zeigen -->
+        <div id="verifyStep">
+            <p style="text-align: center; font-size: 14px;">Kopiere diesen Code in deine <strong>Roblox Bio</strong> (Über mich):</p>
+            <div id="codeDisplay" class="code-box">Lade...</div>
+            <button class="btn-success" id="btnVerify" onclick="verifyEverything()">Bio & Gamepass prüfen</button>
+        </div>
+
+        <div class="status-msg" id="statusLabel"></div>
+        <div id="loader" class="status-msg loader"><i class="fa-solid fa-spinner fa-spin"></i> Kontaktiere Roblox...</div>
+    </div>
+
+    <!-- MAIN DASHBOARD VIEW -->
+    <div id="dashboardView" class="dashboard-container">
+        <div class="dashboard-header">
+            <h2><i class="fa-solid fa-gauge-high"></i> Host Panel</h2>
+            <div><span style="color:var(--success)">●</span> Online | <strong id="displayName">Admin</strong></div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="console" id="logBox">
+                    [SYSTEM] Dashboard gestartet...<br>
+                    [SYSTEM] Verbindung zum Server stabil.
+                </div>
+                <button class="btn-primary" style="height: 60px; font-size: 18px;" onclick="saveCommand('START_SERVER')">
+                    <i class="fa-solid fa-play"></i> SERVER STARTEN (RESERVE)
+                </button>
+            </div>
+            
+            <div>
+                <p style="font-size: 12px; margin-bottom: 5px; color: var(--text-dim);">Global Message senden:</p>
+                <input type="text" id="gMessage" placeholder="An alle Spieler..." style="margin-bottom: 10px;">
+                <button class="btn-primary" onclick="saveCommand('MESSAGE', document.getElementById('gMessage').value)">
+                    <i class="fa-solid fa-bullhorn"></i> Senden
+                </button>
+                <br><br>
+                <button class="btn-danger" style="background: rgba(218, 54, 51, 0.1); border: 1px solid var(--danger);" onclick="saveCommand('SHUTDOWN')">
+                    <i class="fa-solid fa-power-off"></i> Server Instanz schließen
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // HIER DEINE DATEN EINTRAGEN
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwFPAdde56q51Mh87PLF_wbEyXGg4e0Abw182YPPZ1cp7hQgtfi2rp7yGtNNtySA8xFqA/exec"; 
-        const GAMEPASS_ID = 1702894929; // Deine 100 Robux Gamepass ID
-        const PROXY = "https://roproxy.com"; 
+        // --- KONFIGURATION (VON DIR ANPASSEN) ---
+        const GAS_URL = "DEINE_GOOGLE_APPS_SCRIPT_URL_HIER"; // WICHTIG: Deine Google URL
+        
+        let currentUsername = "";
+        let currentUserId = "";
 
-        let rbxName = "";
-        let rbxId = "";
+        // UI Element Shortcuts
+        const statusLabel = document.getElementById('statusLabel');
+        const loader = document.getElementById('loader');
 
-        // 1. Code vom GAS holen
-        async function startVerify() {
-            rbxName = document.getElementById('rbxName').value;
-            if(!rbxName) return;
+        async function getVerificationCode() {
+            currentUsername = document.getElementById('username').value;
+            if(!currentUsername) return alert("Bitte Username eingeben!");
 
-            const res = await fetch(GAS_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "getVerifyCode", username: rbxName })
-            });
-            const data = await res.json();
-            document.getElementById('codeText').innerText = data.code;
-            document.getElementById('login').style.display = 'none';
-            document.getElementById('verifyZone').style.display = 'block';
+            setLoading(true);
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "getVerifyCode", username: currentUsername })
+                });
+                const data = await response.json();
+                
+                document.getElementById('codeDisplay').innerText = data.code;
+                document.getElementById('loginStep').style.display = 'none';
+                document.getElementById('verifyStep').style.display = 'block';
+            } catch (e) {
+                statusLabel.innerText = "Fehler beim Laden des Codes.";
+            }
+            setLoading(false);
         }
 
-        // 2. Account & Kauf prüfen (Via RoProxy)
-        async function checkAccount() {
-            const errorTxt = document.getElementById('error');
-            errorTxt.innerText = "Prüfe...";
+        async function verifyEverything() {
+            setLoading(true);
+            statusLabel.innerText = "Prüfe Bio und Gamepass...";
             
             try {
-                // Get UserId
-                const uRes = await fetch(`${PROXY}/users/v1/usernames/users`, {
-                    method: "POST", headers: {"Content-Type":"application/json"},
-                    body: JSON.stringify({usernames: [rbxName]})
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        action: "verifyAndCheck", 
+                        username: currentUsername 
+                    })
                 });
-                const uData = await uRes.json();
-                rbxId = uData.data[0].id;
+                const data = await response.json();
 
-                // Check Bio
-                const bRes = await fetch(`${PROXY}/users/v1/users/${rbxId}`);
-                const bData = await bRes.json();
-                const neededCode = document.getElementById('codeText').innerText;
-                
-                if(!bData.description.includes(neededCode)) {
-                    errorTxt.innerText = "Code nicht in Bio gefunden!"; return;
+                if (data.success) {
+                    currentUserId = data.userId;
+                    showDashboard();
+                } else {
+                    statusLabel.style.color = "var(--danger)";
+                    statusLabel.innerText = data.message;
                 }
-
-                // Check Gamepass (Item im Inventar?)
-                const pRes = await fetch(`${PROXY}/inventory/v1/users/${rbxId}/items/1/${GAMEPASS_ID}`);
-                const pData = await pRes.json();
-                
-                if(pData.data.length === 0) {
-                    errorTxt.innerText = "Du besitzt den 100 Robux Gamepass nicht!"; return;
-                }
-
-                // ERFOLG -> Zeige Dashboard
-                document.getElementById('verifyZone').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('userLabel').innerText = rbxName;
-
-            } catch(e) { errorTxt.innerText = "Fehler bei der Abfrage."; }
+            } catch (e) {
+                statusLabel.innerText = "Netzwerkfehler beim Verifizieren.";
+            }
+            setLoading(false);
         }
 
-        // 3. Befehl an das GAS speichern
-        async function sendToGAS(type, val = "") {
-            addLog("Sende Befehl: " + type);
+        async function saveCommand(type, extra = "") {
+            addLog("Befehl gesendet: " + type);
             await fetch(GAS_URL, {
-                method: "POST",
+                method: 'POST',
                 body: JSON.stringify({
                     action: "saveCommand",
-                    userId: rbxId,
-                    command: { action: type, data: val }
+                    userId: currentUserId,
+                    command: { action: type, data: extra, time: Date.now() }
                 })
             });
-            addLog("Befehl wurde gespeichert.");
+            if(extra) document.getElementById('gMessage').value = "";
+        }
+
+        function showDashboard() {
+            document.getElementById('authView').style.display = 'none';
+            document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('displayName').innerText = currentUsername;
         }
 
         function addLog(msg) {
-            document.getElementById('logs').innerHTML += "<br>> " + msg;
+            const box = document.getElementById('logBox');
+            const time = new Date().toLocaleTimeString();
+            box.innerHTML += `<div>[${time}] ${msg}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function setLoading(state) {
+            loader.style.display = state ? "block" : "none";
+            document.getElementById('btnVerify').disabled = state;
         }
     </script>
 </body>
